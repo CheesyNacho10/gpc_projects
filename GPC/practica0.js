@@ -58,10 +58,10 @@ gl.useProgram(program);
 
 // Crear vertices
 const vertices = [
-    -0.5, 0.5,
     -0.5, -0.5,
-    0.5, 0.5,
-    0.5, -0.5
+    -0.5, 0.5,
+    0.5, -0.5,
+    0.5, 0.5
 ];
 
 const colors = [
