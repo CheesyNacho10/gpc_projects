@@ -15,15 +15,19 @@ gl.clear(gl.COLOR_BUFFER_BIT);
 const vertexShader = `#version 300 es
     precision mediump float;
     in vec2 position;
+    in vec3 color;
+    out vec3 vColor;
     void main() {
         gl_Position = vec4(position, 0, 1);
+        vColor = color;
     }`;
 
 const fragmentShader = `#version 300 es  
     precision mediump float;
     out vec4 fragColor;
+    in vec3 vColor;
     void main() {
-        fragColor = vec4(1, 1, 1, 1);
+        fragColor = vec4(vColor, 1);
     }`;
 
 // Compilar shaders
@@ -54,9 +58,17 @@ gl.useProgram(program);
 
 // Crear vertices
 const vertices = [
+    -0.5, 0.5,
     -0.5, -0.5,
-    0, 0.5,
+    0.5, 0.5,
     0.5, -0.5
+];
+
+const colors = [
+    1, 0, 0,
+    0, 1, 0,
+    0, 0, 1,
+    1, 1, 0
 ];
 
 // Crear buffer
@@ -67,5 +79,12 @@ const position = gl.getAttribLocation(program, 'position');
 gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
 gl.enableVertexAttribArray(position);
 
+const colorBuffer = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
+const color = gl.getAttribLocation(program, 'color');
+gl.vertexAttribPointer(color, 3, gl.FLOAT, false, 0, 0);
+gl.enableVertexAttribArray(color);
+
 // Dibujar
-gl.drawArrays(gl.TRIANGLES, 0, 3);
+gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
