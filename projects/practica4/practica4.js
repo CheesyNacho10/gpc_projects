@@ -10,7 +10,6 @@ import { GUI } from '../../lib/lil-gui.module.min.js';
 var renderer, scene, camera, controls, light;
 var miniRenderer, miniCamera;
 var controlers, effectController, isAnimating = false;
-var animations = [];
 
 // Models
 var plane, robotArm;
@@ -74,7 +73,6 @@ function init() {
     miniCamera.lookAt(scene.position);
 
     createGUI();
-    defineAnimations();
 }
 
 document.addEventListener('keydown', function(event) {
@@ -111,30 +109,48 @@ function createGUI() {
     var gui = new GUI();
 
     var h = gui.addFolder("Control robot");
-    controlers.baseRotation =
-        h.add(effectController, "baseRotation", -180.0, 180.0, 0.1)
+
+    const baseRotationMin = -180.0; const baseRotationMax = 180.0;
+    controlers.baseRotation = [
+        h.add(effectController, "baseRotation", baseRotationMin, baseRotationMax, 0.1)
             .name("Giro base")
-            .onChange(value => robotArm.setBaseRotation(value * Math.PI / 180.0));
-    controlers.armRotation =
-        h.add(effectController, "armRotation", -45.0, 45.0, 0.1)
+            .onChange(value => robotArm.setBaseRotation(value * Math.PI / 180.0)),
+        baseRotationMin, baseRotationMax];
+    
+    const armRotationMin = -45.0; const armRotationMax = 45.0;
+    controlers.armRotation = [
+        h.add(effectController, "armRotation", armRotationMin, armRotationMax, 0.1)
             .name("Giro brazo")
-            .onChange(value => robotArm.setAxisRotation(value * Math.PI / 180.0));
-    controlers.forearmYRotation =
-        h.add(effectController, "forearmYRotation", -180.0, 180.0, 0.1)
+            .onChange(value => robotArm.setAxisRotation(value * Math.PI / 180.0)),
+        armRotationMin, armRotationMax];
+
+    const forearmYRotationMin = -180.0; const forearmYRotationMax = 180.0;
+    controlers.forearmYRotation = [
+        h.add(effectController, "forearmYRotation", forearmYRotationMin, forearmYRotationMax, 0.1)
             .name("Giro antebrazo Y")
-            .onChange(value => robotArm.setKneeCapYRotation(value * Math.PI / 180.0));
-    controlers.forearmZRotation =
-        h.add(effectController, "forearmZRotation", -90.0, 90.0, 0.1)
+            .onChange(value => robotArm.setKneeCapYRotation(value * Math.PI / 180.0)),
+        forearmYRotationMin, forearmYRotationMax];
+
+    const forearmZRotationMin = -90.0; const forearmZRotationMax = 90.0;
+    controlers.forearmZRotation = [
+        h.add(effectController, "forearmZRotation", forearmZRotationMin, forearmZRotationMax, 0.1)
             .name("Giro antebrazo Z")
-            .onChange(value => robotArm.setKneeCapZRotation(value * Math.PI / 180.0));
-    controlers.wristRotation =
-        h.add(effectController, "wristRotation", -40.0, 220.0, 0.1)
+            .onChange(value => robotArm.setKneeCapZRotation(value * Math.PI / 180.0)),
+        forearmZRotationMin, forearmZRotationMax];
+
+    const wristRotationMin = -40.0; const wristRotationMax = 220.0;
+    controlers.wristRotation = [
+        h.add(effectController, "wristRotation", wristRotationMin, wristRotationMax, 0.1)
             .name("Giro muñeca")
-            .onChange(value => robotArm.setWristRotation(value * Math.PI / 180.0));
-    controlers.clawOpening =
-        h.add(effectController, "clawOpening", 0.0, 15.0, 0.1)
+            .onChange(value => robotArm.setWristRotation(value * Math.PI / 180.0)),
+        wristRotationMin, wristRotationMax];
+
+    const clawOpeningMin = 0.0; const clawOpeningMax = 15.0;
+    controlers.clawOpening = [
+        h.add(effectController, "clawOpening", clawOpeningMin, clawOpeningMax, 0.1)
             .name("Apertura pinza")
-            .onChange(value => robotArm.setFingersOpen(value));
+            .onChange(value => robotArm.setFingersOpen(value)),
+        clawOpeningMin, clawOpeningMax];
     h.add(effectController, "isAlambric")
         .name("Alámbrico")
         .onChange((value) => {
@@ -144,61 +160,55 @@ function createGUI() {
     h.add(effectController, "animate").name("Animar");
 }
 
-function defineAnimations() {
-    animations = [
-        new TWEEN.Tween(robotArm.base.object.rotation)
-            .to({ y: [robotArm.base.object.rotation.y, robotArm.base.object.rotation.y + 2 * Math.PI] }, 3000)
-            .easing(TWEEN.Easing.Linear.None)
-            .onUpdate(function(value) {
-                robotArm.base.object.rotation.y = value.y;
-                effectController.baseRotation = (robotArm.base.object.rotation.y * 180 / Math.PI + 180) % 360 - 180;
-                controlers.baseRotation.updateDisplay();
-            })
-            .repeat(Infinity)
-        ,
-        createPendulumTween(robotArm.arm.rotation.z, Math.PI/4, -Math.PI/4)
-    ];
-}
-
-function createPendulumTween(object, property, start, max, min, duration = 1500) {
-    let toMax = new TWEEN.Tween(object)
-        .to({ [property]: max }, duration)
-        .easing(TWEEN.Easing.Quadratic.InOut)
-        .onUpdate(function() {
-            if (object === robotArm.arm.rotation && property === 'z') {
-                effectController.armRotation = (robotArm.arm.rotation.z * 180 / Math.PI + 180) % 360 - 180;
-                controlers.armRotation.updateDisplay();
-            }
-            // Add similar conditions for other properties if needed
-        });
-
-    let toMin = new TWEEN.Tween(object)
-        .to({ [property]: min }, duration)
-        .easing(TWEEN.Easing.Quadratic.InOut);
-
-    let toStart = new TWEEN.Tween(object)
-        .to({ [property]: start }, duration)
-        .easing(TWEEN.Easing.Quadratic.InOut)
-        .onComplete(() => {
-            toMax.start(); // Start the chain again
-        });
-
-    // Chain the tweens
-    toMax.chain(toMin);
-    toMin.chain(toStart);
-
-    return toMax; // Return the first tween in the chain
-}
-
-
 function toggleAnimation() {
     if (isAnimating) {
-        animations.forEach(animation => animation.stop());
+        // Detener todas las animaciones
+        TWEEN.removeAll();
         isAnimating = false;
     } else {
-        defineAnimations();
-        animations.forEach(animation => animation.start());
         isAnimating = true;
+
+        // Crear animaciones para cada control
+        Object.keys(controlers).forEach(key => {
+            const controller = controlers[key][0];
+            const startValue = controller.getValue();
+            const endValue = startValue + (controlers[key][2] - controlers[key][1]) / 2;
+
+            new TWEEN.Tween({ value: startValue })
+                .to({ value: endValue }, 2000)
+                .easing(TWEEN.Easing.Quadratic.InOut)
+                .onUpdate(function (object) {
+                    controller.setValue(object.value);
+                    // Actualizar el brazo del robot directamente
+                    updateRobotArmFromController(key, object.value);
+                })
+                .repeat(Infinity)
+                .yoyo(true)
+                .start();
+        });
+    }
+}
+
+function updateRobotArmFromController(key, value) {
+    switch (key) {
+        case 'baseRotation':
+            robotArm.setBaseRotation(value * Math.PI / 180.0);
+            break;
+        case 'armRotation':
+            robotArm.setAxisRotation(value * Math.PI / 180.0);
+            break;
+        case 'forearmYRotation':
+            robotArm.setKneeCapYRotation(value * Math.PI / 180.0);
+            break;
+        case 'forearmZRotation':
+            robotArm.setKneeCapZRotation(value * Math.PI / 180.0);
+            break;
+        case 'wristRotation':
+            robotArm.setWristRotation(value * Math.PI / 180.0);
+            break;
+        case 'clawOpening':
+            robotArm.setFingersOpen(value);
+            break;
     }
 }
 
