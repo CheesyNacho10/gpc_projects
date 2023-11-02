@@ -1,10 +1,22 @@
 // Modulos necesarios
+
+const githubPagesPath = "gpc_projects/";
+const relativePath = "../../../";
+let importPath = false ? githubPagesPath : relativePath
+
 import * as THREE from '../../../lib/three.module.js';
-import { OrbitControls } from './../../../lib/OrbitControls.module.js';
+import { OrbitControls } from '../../../lib/OrbitControls.module.js';
 import { RobotArm } from '../../../js/robot_arm/RobotArm.js'
-import { RobotArmOptions } from '../../js/robot_arm/RobotArm.js';
-import { TWEEN } from '../../lib/tween.module.min.js';
-import { GUI } from '../../lib/lil-gui.module.min.js';
+import { RobotArmOptions } from '../../../js/robot_arm/RobotArm.js';
+import { TWEEN } from '../../../lib/tween.module.min.js';
+import { GUI } from '../../../lib/lil-gui.module.min.js';
+
+// import * as THREE from 'gpc_projects/lib/three.module.js';
+// import { OrbitControls } from 'gpc_projects/lib/OrbitControls.module.js';
+// import { RobotArm } from 'gpc_projects/js/robot_arm/RobotArm.js'
+// import { RobotArmOptions } from 'gpc_projects/js/robot_arm/RobotArm.js';
+// import { TWEEN } from 'gpc_projects/lib/tween.module.min.js';
+// import { GUI } from 'gpc_projects/lib/lil-gui.module.min.js';
 
 // Variables globales
 var renderer, scene, camera, controls, light;
