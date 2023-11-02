@@ -1,9 +1,5 @@
 // Modulos necesarios
 
-const githubPagesPath = "gpc_projects/";
-const relativePath = "../../../";
-let importPath = false ? githubPagesPath : relativePath
-
 // import * as THREE from '../../../lib/three.module.js';
 // import { OrbitControls } from '../../../lib/OrbitControls.module.js';
 // import { RobotArm } from '../../../js/robot_arm/RobotArm.js'
