@@ -174,8 +174,9 @@ function toggleAnimation() {
             const minValue = controlers[key][1];
             const maxValue = controlers[key][2];
 
-            const durationToMax = 5000 * (maxValue - startValue) / (maxValue - minValue);
-            const durationToMin = 5000 * (startValue - minValue) / (maxValue - minValue);
+            const randomTime = Math.random() * 5000 + 2000;
+            const durationToMax = randomTime * (maxValue - startValue) / (maxValue - minValue);
+            const durationToMin = randomTime * (startValue - minValue) / (maxValue - minValue);
 
             new TWEEN.Tween({ value: startValue })
                 .to({ value: maxValue }, durationToMax)
