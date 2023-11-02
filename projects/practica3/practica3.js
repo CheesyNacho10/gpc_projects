@@ -1,8 +1,13 @@
 // Modulos necesarios
-import * as THREE from '../../../lib/three.module.js';
-import { OrbitControls } from './../../../lib/OrbitControls.module.js';
-import { RobotArm } from '../../../js/robot_arm/RobotArm.js'
-import { RobotArmOptions } from '../../js/robot_arm/RobotArm.js';
+// import * as THREE from '../../../lib/three.module.js';
+// import { OrbitControls } from '../../../lib/OrbitControls.module.js';
+// import { RobotArm } from '../../../js/robot_arm/RobotArm.js'
+// import { RobotArmOptions } from '../../../js/robot_arm/RobotArm.js';
+
+import * as THREE from '/gpc_projects/lib/three.module.js';
+import { OrbitControls } from '/gpc_projects/lib/OrbitControls.module.js';
+import { RobotArm } from '/gpc_projects/js/robot_arm/RobotArm.js'
+import { RobotArmOptions } from '/gpc_projects/js/robot_arm/RobotArm.js';
 
 // Variables globales
 var renderer, scene, camera, controls, light;
