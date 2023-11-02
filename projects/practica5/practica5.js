@@ -5,7 +5,6 @@ import { RobotArm } from '../../../js/robot_arm/RobotArm.js'
 import { RobotArmOptions } from '../../js/robot_arm/RobotArm.js';
 import { TWEEN } from '../../lib/tween.module.min.js';
 import { GUI } from '../../lib/lil-gui.module.min.js';
-import { RobotFingerOptions } from '../../js/robot_arm/components/RobotFinger.js';
 
 // Variables globales
 var renderer, scene, camera, controls, light;
