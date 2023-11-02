@@ -168,22 +168,34 @@ function toggleAnimation() {
     } else {
         isAnimating = true;
 
-        // Crear animaciones para cada control
         Object.keys(controlers).forEach(key => {
             const controller = controlers[key][0];
             const startValue = controller.getValue();
-            const endValue = startValue + (controlers[key][2] - controlers[key][1]) / 2;
+            const minValue = controlers[key][1];
+            const maxValue = controlers[key][2];
+
+            const durationToMax = 5000 * (maxValue - startValue) / (maxValue - minValue);
+            const durationToMin = 5000 * (startValue - minValue) / (maxValue - minValue);
 
             new TWEEN.Tween({ value: startValue })
-                .to({ value: endValue }, 2000)
+                .to({ value: maxValue }, durationToMax)
                 .easing(TWEEN.Easing.Quadratic.InOut)
                 .onUpdate(function (object) {
                     controller.setValue(object.value);
-                    // Actualizar el brazo del robot directamente
                     updateRobotArmFromController(key, object.value);
                 })
-                .repeat(Infinity)
-                .yoyo(true)
+                .onComplete(function() {
+                    new TWEEN.Tween({ value: maxValue })
+                        .to({ value: minValue }, durationToMin * 2)
+                        .easing(TWEEN.Easing.Quadratic.InOut)
+                        .onUpdate(function (object) {
+                            controller.setValue(object.value);
+                            updateRobotArmFromController(key, object.value);
+                        })
+                        .repeat(Infinity) // Repetir infinitamente
+                        .yoyo(true) // Ida y vuelta
+                        .start();
+                })
                 .start();
         });
     }
