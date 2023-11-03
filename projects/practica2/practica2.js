@@ -1,6 +1,6 @@
 // Modulos necesarios
-import * as THREE from '../../../lib/three.module.js';
-import { RobotArm } from '../../../js/robot_arm/RobotArm.js'
+import * as THREE from '../../lib/three.module.js';
+import { RobotArm } from '../../js/robot_arm/RobotArm.js'
 
 // Variables globales
 var renderer, scene, camera, controls, light;
