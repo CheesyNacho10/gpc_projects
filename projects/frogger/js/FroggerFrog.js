@@ -12,7 +12,7 @@ export class FroggerFrog {
 
         this.object = new THREE.Object3D();
         const glloader = new GLTFLoader();
-        glloader.load('../../../models/frog/frog.glb', (objeto)  => {
+        glloader.load('/gpc_projects/models/frog/frog.glb', (objeto)  => {
             this.object.add(objeto.scene);
             objeto.scene.scale.set(2, 2, 2);
             objeto.scene.name = 'frog';
